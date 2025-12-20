@@ -4,9 +4,13 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.0.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, ... }:
+  outputs = { self, nixpkgs, lanzaboote, nixos-hardware, ... }:
   let
     system = "x86_64-linux";
     
@@ -16,6 +20,8 @@
         inherit system;
         modules = [
           baseModule
+          lanzaboote.nixosModules.lanzaboote
+	        ./modules/lanza.nix
         ] ++ modules;
       };
 
@@ -29,31 +35,31 @@
 
       config = {
       
-        # Bootloader.
+	      # Bootloader.
   	      boot.loader.systemd-boot.enable = true;
-        	boot.loader.efi.canTouchEfiVariables = true;
+        boot.loader.efi.canTouchEfiVariables = true;
 
-        	# Use latest kernel.
-        	boot.kernelPackages = pkgs.linuxPackages_latest;
+        # Use latest kernel.
+        boot.kernelPackages = pkgs.linuxPackages_latest;
 
-        	boot.initrd.luks.devices."luks-48307e0b-b2fb-471a-8f6e-5e0f090bf1b1".device = "/dev/disk/by-uuid/48307e0b-b2fb-471a-8f6e-5e0f090bf1b1";
-        	# networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+        boot.initrd.luks.devices."luks-48307e0b-b2fb-471a-8f6e-5e0f090bf1b1".device = "/dev/disk/by-uuid/48307e0b-b2fb-471a-8f6e-5e0f090bf1b1";
+        # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-        	# Configure network proxy if necessary
-        	# networking.proxy.default = "http://user:password@proxy:port/";
-        	# networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+        # Configure network proxy if necessary
+        # networking.proxy.default = "http://user:password@proxy:port/";
+        # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-        	# Enable networking
-        	networking.networkmanager.enable = true;
+        # Enable networking
+        networking.networkmanager.enable = true;
 
-        	# Set your time zone.
-        	time.timeZone = "Europe/Berlin";
+        # Set your time zone.
+        time.timeZone = "Europe/Berlin";
 
-        	# Select internationalisation properties.
-        	i18n.defaultLocale = "en_US.UTF-8";
+        # Select internationalisation properties.
+        i18n.defaultLocale = "en_US.UTF-8";
 
-        	i18n.extraLocaleSettings = {
-          	LC_ADDRESS = "de_DE.UTF-8";
+        i18n.extraLocaleSettings = {
+          LC_ADDRESS = "de_DE.UTF-8";
           LC_IDENTIFICATION = "de_DE.UTF-8";
           LC_MEASUREMENT = "de_DE.UTF-8";
           LC_MONETARY = "de_DE.UTF-8";
