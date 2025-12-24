@@ -11,7 +11,7 @@
       size = 10000;
       path = "${config.xdg.dataHome}/zsh/history";
     };
-    initExtra = ''
+    initContent = ''
     case $(tty) in
       (/dev/tty[1-9]);;
       (*)
