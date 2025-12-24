@@ -8,9 +8,13 @@
       url = "github:nix-community/lanzaboote/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, lanzaboote, nixos-hardware, ... }:
+  outputs = { self, nixpkgs, lanzaboote, nixos-hardware, home-manager, ... }@inputs:
   let
     system = "x86_64-linux";
     
@@ -18,10 +22,20 @@
     createT490Config = name: modules:
       nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = {
+          inherit inputs; # this passes down the inputs
+        };
         modules = [
           baseModule
           lanzaboote.nixosModules.lanzaboote
 	        ./modules/lanza.nix
+	        home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.maltina = import ./home;
+            home-manager.extraSpecialArgs = inputs; # from the passed down input, we can pass these as args to `home.nix`
+          }
         ] ++ modules;
       };
 
@@ -31,6 +45,8 @@
       imports = [
         ./hardware-configuration.nix 
         (nixos-hardware.nixosModules.lenovo-thinkpad-t490)
+        # system modules
+        ./modules/fonts.nix
       ];
 
       config = {
@@ -120,6 +136,9 @@
 
         # Install firefox.
         programs.firefox.enable = true;
+
+        programs.zsh.enable = true;
+        users.defaultUserShell = pkgs.zsh;
 
         # Allow unfree packages
         nixpkgs.config.allowUnfree = true;
