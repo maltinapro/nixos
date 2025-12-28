@@ -19,7 +19,7 @@
     system = "x86_64-linux";
     
     # Helper function to create a complete T490 profile
-    createT490Config = name: modules:
+    createT490Config = name: modules: hmModules:
       nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {
@@ -33,7 +33,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.maltina = import ./home;
+            home-manager.users.maltina = { 
+              imports = [ ./home ] ++ hmModules; # Import base home AND extra modules
+            };
             home-manager.extraSpecialArgs = inputs; # from the passed down input, we can pass these as args to `home.nix`
           }
         ] ++ modules;
@@ -188,13 +190,19 @@
     nixosConfigurations = {
 
       # 1. Development Profile
-      "thinkpad-development" = createT490Config "Development" [ ./hosts/thinkpad-t490/development.nix ];
+      "thinkpad-development" = createT490Config "Development" 
+      [ ./hosts/thinkpad-t490/development.nix ]
+      [ ./home/modules/vscode.nix ];
 
       # 2. Test Profile
-      "thinkpad-test" = createT490Config "Test" [ ./hosts/thinkpad-t490/test.nix ];
+      "thinkpad-test" = createT490Config "Test" 
+      [ ./hosts/thinkpad-t490/test.nix ]
+      [ ];
 
       # 3. Media Profile
-      "thinkpad-media" = createT490Config "Media" [ ./hosts/thinkpad-t490/media.nix ];
+      "thinkpad-media" = createT490Config "Media" 
+      [./hosts/thinkpad-t490/media.nix ]
+      [ ];
 
     };
 
