@@ -8,7 +8,6 @@
   environment.systemPackages = with pkgs; [
     google-chrome
     git
-    neovim
     nodejs
     python3
     go
