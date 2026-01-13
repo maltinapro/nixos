@@ -12,6 +12,10 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nvchad = {
+      url = "github:nix-community/nix4nvchad";
+      inputs.nixpkgs.follows = "nixpkgs"; 
+    };
   };
 
   outputs = { self, nixpkgs, lanzaboote, nixos-hardware, home-manager, ... }@inputs:
@@ -19,185 +23,124 @@
     system = "x86_64-linux";
     
     # Helper function to create a complete T490 profile
-    createT490Config = name: modules:
+    # It now correctly takes 3 arguments: name, nixosModules, and hmModules
+    createT490Config = name: nixosModules: hmModules:
       nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {
-          inherit inputs; # this passes down the inputs
+          inherit inputs;
         };
         modules = [
           baseModule
           lanzaboote.nixosModules.lanzaboote
-	        ./modules/lanza.nix
-	        home-manager.nixosModules.home-manager
+          ./modules/lanza.nix
+          home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.maltina = import ./home;
-            home-manager.extraSpecialArgs = inputs; # from the passed down input, we can pass these as args to `home.nix`
+            home-manager.users.maltina = { 
+              imports = [ ./home ] ++ hmModules; 
+            };
+            home-manager.extraSpecialArgs = { inherit inputs; };
           }
-        ] ++ modules;
+        ] ++ nixosModules;
       };
 
-    # baseModule accepts pkgs, lib, and config
-    baseModule = { lib, config, pkgs, ... }: { 
+    baseModule = { lib, pkgs, ... }: { 
     
       imports = [
         ./hardware-configuration.nix 
-        (nixos-hardware.nixosModules.lenovo-thinkpad-t490)
-        # system modules
+        nixos-hardware.nixosModules.lenovo-thinkpad-t490
         ./modules/fonts.nix
       ];
 
-      config = {
-      
-	      # Bootloader.
-  	      boot.loader.systemd-boot.enable = true;
-        boot.loader.efi.canTouchEfiVariables = true;
+      # Bootloader settings
+      boot.loader.systemd-boot.enable = true;
+      boot.loader.efi.canTouchEfiVariables = true;
 
-        # Use latest kernel.
-        boot.kernelPackages = pkgs.linuxPackages_latest;
+      # Use latest kernel
+      boot.kernelPackages = pkgs.linuxPackages_latest;
 
-        boot.initrd.luks.devices."luks-48307e0b-b2fb-471a-8f6e-5e0f090bf1b1".device = "/dev/disk/by-uuid/48307e0b-b2fb-471a-8f6e-5e0f090bf1b1";
-        # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+      boot.initrd.luks.devices."luks-48307e0b-b2fb-471a-8f6e-5e0f090bf1b1".device = "/dev/disk/by-uuid/48307e0b-b2fb-471a-8f6e-5e0f090bf1b1";
 
-        # Configure network proxy if necessary
-        # networking.proxy.default = "http://user:password@proxy:port/";
-        # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+      networking.networkmanager.enable = true;
+      time.timeZone = "Europe/Berlin";
+      i18n.defaultLocale = "en_US.UTF-8";
 
-        # Enable networking
-        networking.networkmanager.enable = true;
+      i18n.extraLocaleSettings = {
+        LC_ADDRESS = "de_DE.UTF-8";
+        LC_IDENTIFICATION = "de_DE.UTF-8";
+        LC_MEASUREMENT = "de_DE.UTF-8";
+        LC_MONETARY = "de_DE.UTF-8";
+        LC_NAME = "de_DE.UTF-8";
+        LC_NUMERIC = "de_DE.UTF-8";
+        LC_PAPER = "de_DE.UTF-8";
+        LC_TELEPHONE = "de_DE.UTF-8";
+        LC_TIME = "de_DE.UTF-8";
+      };
 
-        # Set your time zone.
-        time.timeZone = "Europe/Berlin";
+      services.displayManager.gdm.enable = true;
+      services.desktopManager.gnome.enable = true;
 
-        # Select internationalisation properties.
-        i18n.defaultLocale = "en_US.UTF-8";
+      services.xserver.xkb = {
+        layout = "de";
+        variant = "nodeadkeys";
+      };
 
-        i18n.extraLocaleSettings = {
-          LC_ADDRESS = "de_DE.UTF-8";
-          LC_IDENTIFICATION = "de_DE.UTF-8";
-          LC_MEASUREMENT = "de_DE.UTF-8";
-          LC_MONETARY = "de_DE.UTF-8";
-          LC_NAME = "de_DE.UTF-8";
-          LC_NUMERIC = "de_DE.UTF-8";
-          LC_PAPER = "de_DE.UTF-8";
-          LC_TELEPHONE = "de_DE.UTF-8";
-          LC_TIME = "de_DE.UTF-8";
-        };
+      console.keyMap = "de-latin1-nodeadkeys";
+      services.printing.enable = true;
 
-        # Enable the GNOME Desktop Environment.
-        services.displayManager.gdm.enable = true;
-        services.desktopManager.gnome.enable = true;
+      security.rtkit.enable = true;
+      services.pipewire = {
+        enable = true;
+        alsa.enable = true;
+        alsa.support32Bit = true;
+        pulse.enable = true;
+      };
 
-        # Configure keymap in X11
-        services.xserver.xkb = {
-          layout = "de";
-          variant = "nodeadkeys";
-        };
+      users.users.maltina = {
+        isNormalUser = true;
+        description = "Maltina Bassse";
+        extraGroups = [ "networkmanager" "wheel" ];
+      };
 
-        # Configure console keymap
-        console.keyMap = "de-latin1-nodeadkeys";
+      programs.firefox.enable = true;
+      programs.zsh.enable = true;
+      users.defaultUserShell = pkgs.zsh;
 
-        # Enable CUPS to print documents.
-        services.printing.enable = true;
+      nixpkgs.config.allowUnfree = true;
 
-        # Enable sound with pipewire.
-        services.pulseaudio.enable = false;
-        security.rtkit.enable = true;
-        services.pipewire = {
-          enable = true;
-          alsa.enable = true;
-          alsa.support32Bit = true;
-          pulse.enable = true;
-          # If you want to use JACK applications, uncomment this
-          #jack.enable = true;
+      environment.systemPackages = with pkgs; [
+        signal-desktop
+        fluffychat
+      ];
 
-          # use the example session manager (no others are packaged yet so this is enabled by default,
-          # no need to redefine it in your config for now)
-          #media-session.enable = true;
-        };
+      system.stateVersion = "25.05";
 
-        # Enable touchpad support (enabled default in most desktopManager).
-        # services.xserver.libinput.enable = true;
-
-        # Define a user account. Don't forget to set a password with ‘passwd’.
-        users.users.maltina = {
-          isNormalUser = true;
-          description = "Maltina Bassse";
-          extraGroups = [ "networkmanager" "wheel" ];
-          packages = with pkgs; [
-          #  thunderbird
-          ];
-        };
-
-        # Install firefox.
-        programs.firefox.enable = true;
-
-        programs.zsh.enable = true;
-        users.defaultUserShell = pkgs.zsh;
-
-        # Allow unfree packages
-        nixpkgs.config.allowUnfree = true;
-
-        # List packages installed in system profile. To search, run:
-        # $ nix search wget
-        environment.systemPackages = with pkgs; [
-        #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-        #  wget
-          signal-desktop
-          fluffychat
-        ];
-
-        # Some programs need SUID wrappers, can be configured further or are
-        # started in user sessions.
-        # programs.mtr.enable = true;
-        # programs.gnupg.agent = {
-        #   enable = true;
-        #   enableSSHSupport = true;
-        # };
-
-        # List services that you want to enable:
-
-        # Enable the OpenSSH daemon.
-        # services.openssh.enable = true;
-
-        # Open ports in the firewall.
-        # networking.firewall.allowedTCPPorts = [ ... ];
-        # networking.firewall.allowedUDPPorts = [ ... ];
-        # Or disable the firewall altogether.
-        # networking.firewall.enable = false;
-
-        # This value determines the NixOS release from which the default
-        # settings for stateful data, like file locations and database versions
-        # on your system were taken. It‘s perfectly fine and recommended to leave
-        # this value at the release version of the first install of this system.
-        # Before changing this value read the documentation for this option
-        # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-        system.stateVersion = "25.05"; # Did you read the comment?
-
-        nix.extraOptions = ''
-          experimental-features = nix-command flakes
-        ''; 
-      }; # END OF 'config' ATTRIBUTE
-    }; # END OF baseModule
-
+      nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    };
 
   in {
-
     nixosConfigurations = {
 
       # 1. Development Profile
-      "thinkpad-development" = createT490Config "Development" [ ./hosts/thinkpad-t490/development.nix ];
+      # Note: vscode and nvchad are now both inside the third argument (the HM module list)
+      "thinkpad-development" = createT490Config "Development" 
+        [ ./hosts/thinkpad-t490/development.nix ]
+        [ 
+          ./home/modules/vscode.nix 
+          ./home/modules/nvchad.nix 
+        ];
 
       # 2. Test Profile
-      "thinkpad-test" = createT490Config "Test" [ ./hosts/thinkpad-t490/test.nix ];
+      "thinkpad-test" = createT490Config "Test" 
+        [ ./hosts/thinkpad-t490/test.nix ]
+        [ ];
 
       # 3. Media Profile
-      "thinkpad-media" = createT490Config "Media" [ ./hosts/thinkpad-t490/media.nix ];
-
+      "thinkpad-media" = createT490Config "Media" 
+        [ ./hosts/thinkpad-t490/media.nix ]
+        [ ];
     };
-
   };
 }
-

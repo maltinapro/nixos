@@ -8,15 +8,18 @@
   environment.systemPackages = with pkgs; [
     google-chrome
     git
-    neovim 
-    vscode
     nodejs
     python3
     go
-    rustup
     tmux
     htop
     dbeaver-bin
+    #rust
+    rustc
+    cargo
+    rustlings
+    rust-analyzer
+    gcc
   ];
   
   # Docker and Virtualization
