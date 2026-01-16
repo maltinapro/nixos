@@ -91,6 +91,7 @@
       services.printing.enable = true;
 
       security.rtkit.enable = true;
+
       services.pipewire = {
         enable = true;
         alsa.enable = true;
@@ -108,16 +109,14 @@
       programs.zsh.enable = true;
       users.defaultUserShell = pkgs.zsh;
 
-      nixpkgs.config.allowUnfree = true;
-
       environment.systemPackages = with pkgs; [
         signal-desktop
         fluffychat
       ];
 
-      system.stateVersion = "25.05";
-
+      nixpkgs.config.allowUnfree = true;
       nix.settings.experimental-features = [ "nix-command" "flakes" ];
+      system.stateVersion = "25.05";
     };
 
   in {
