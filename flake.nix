@@ -101,7 +101,7 @@
 
       users.users.maltina = {
         isNormalUser = true;
-        description = "Maltina Bassse";
+        description = "Maltina Basse";
         extraGroups = [ "networkmanager" "wheel" ];
       };
 

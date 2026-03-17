@@ -87,7 +87,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.maltina = {
     isNormalUser = true;
-    description = "Maltina Bassse";
+    description = "Maltina Basse";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
     #  thunderbird
