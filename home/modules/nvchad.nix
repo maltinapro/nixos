@@ -8,6 +8,14 @@
 
   programs.nvchad = {
     enable = true;
+    extraConfig = ''
+      -- Protect terminal window from being overwritten
+      vim.api.nvim_create_autocmd("TermOpen", {
+        callback = function()
+          vim.wo.winfixbuf = true
+        end,
+      })
+    '';
     extraPackages = with pkgs; [
       # --- Rust Essentials ---
       rust-analyzer      # The "Brain" (LSP) for code completion and errors
