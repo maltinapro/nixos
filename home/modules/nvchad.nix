@@ -8,6 +8,28 @@
 
   programs.nvchad = {
     enable = true;
+
+    # extraPlugins is injected as a lazy.nvim plugin spec (plugins/init-2.lua)
+    # This is the correct way to add plugins — extraConfig runs AFTER lazy is initialized
+    extraPlugins = ''
+      return {
+        {
+          "MeanderingProgrammer/render-markdown.nvim",
+          dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+          ft = { "markdown" },
+          opts = {
+            heading  = { enabled = true },
+            code     = { enabled = true },
+            dash     = { enabled = true },
+            bullet   = { enabled = true },
+            checkbox = { enabled = true },
+            table    = { enabled = true },
+            link     = { enabled = true },
+          },
+        },
+      }
+    '';
+
     extraConfig = ''
       -- Protect terminal window from being overwritten
       vim.api.nvim_create_autocmd("TermOpen", {
@@ -16,6 +38,7 @@
         end,
       })
     '';
+
     extraPackages = with pkgs; [
       # --- Rust Essentials ---
       rust-analyzer      # The "Brain" (LSP) for code completion and errors
@@ -34,6 +57,10 @@
       
       # --- Debugging ---
       lldb               # Debugger (works great with Rust)
+
+      # --- Markdown ---
+      vimPlugins.render-markdown-nvim  # Plugin managed by Nix, placed on rtp
+      marksman                         # Markdown LSP (go-to-definition, link checking)
     ];
   };
 }
