@@ -115,6 +115,13 @@
   #   enableSSHSupport = true;
   # };
 
+  # Enable GNOME Keyring daemon (manages SSH keys, secrets, etc.)
+  services.gnome.gnome-keyring.enable = true;
+
+  # Wire up PAM so GNOME Keyring auto-unlocks at login
+  security.pam.services.login.enableGnomeKeyring = true;
+  security.pam.services.gdm-password.enableGnomeKeyring = true;
+
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.

@@ -1,33 +1,39 @@
 { pkgs, ... }:
 
 {
-  # Install the necessary GUI tools for the user
+  # GUI tools for managing keys
   home.packages = with pkgs; [
-    seahorse       # For managing keys visually
-    pinentry-gnome3
+    seahorse          # GNOME Keyring GUI (Passwords and Keys)
   ];
 
-  # Set the variables that tell Git and SSH to use the GNOME Keyring
+  # Use the graphical askpass helper so ssh-add can prompt via GNOME dialog.
+  # SSH_AUTH_SOCK is set automatically by the GNOME PAM module on login.
   home.sessionVariables = {
-    SSH_AUTH_SOCK = "/run/user/1000/keyring/ssh";
     SSH_ASKPASS = "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     SSH_ASKPASS_REQUIRE = "prefer";
   };
 
-  # Create a user-level service to add the key once when you log in
+  # Systemd user service: add SSH key to GNOME Keyring once per session
   systemd.user.services.ssh-key-add = {
     Unit = {
-      Description = "Automatically add SSH key to agent";
+      Description = "Add SSH key to GNOME Keyring agent";
       After = [ "graphical-session.target" ];
+      ConditionPathExists = "%h/.ssh/id_ed25519";
     };
     Install = {
       WantedBy = [ "graphical-session.target" ];
     };
     Service = {
       Type = "oneshot";
+      # Use the keyring's SSH agent socket (%t = $XDG_RUNTIME_DIR)
+      Environment = [
+        "SSH_AUTH_SOCK=%t/keyring/ssh"
+        "SSH_ASKPASS_REQUIRE=prefer"
+      ];
+      # Inherit display variables so the askpass dialog can open
+      PassEnvironment = "DISPLAY WAYLAND_DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS";
       ExecStart = "${pkgs.openssh}/bin/ssh-add %h/.ssh/id_ed25519";
       RemainAfterExit = true;
-      ExecStartPre = "${pkgs.coreutils}/bin/test -f %h/.ssh/id_ed25519";
     };
   };
 }
