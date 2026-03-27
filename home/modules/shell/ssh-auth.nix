@@ -6,11 +6,15 @@
     seahorse          # GNOME Keyring GUI (Passwords and Keys)
   ];
 
-  # SSH_AUTH_SOCK is set automatically by the GNOME PAM module on login.
+  # Point SSH at the GNOME Keyring SSH agent socket.
+  # $XDG_RUNTIME_DIR is expanded by the shell at startup (typically /run/user/1000).
+  # This avoids the need to run `eval $(ssh-agent -s)` manually in every terminal.
   # SSH_ASKPASS / SSH_ASKPASS_REQUIRE are intentionally NOT set here for
   # terminal sessions — SSH will use the keyring agent silently or fall back to
   # TTY prompting, avoiding hangs when the GUI helper can't open a dialog.
-  # They are set inside the systemd service below where no TTY is present.
+  home.sessionVariables = {
+    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
+  };
 
   # Systemd user service: add SSH key to GNOME Keyring once per session
   systemd.user.services.ssh-key-add = {
