@@ -43,17 +43,28 @@ in
     };
   };
 
-  # Systemd user service: add SSH key to the gcr-ssh-agent once per session.
-  # The service first checks whether the key is already loaded (gcr-ssh-agent
-  # auto-loads keys stored in the GNOME Keyring after a successful GDM login).
-  # If the key is already present, nothing happens.  If not (first login after
-  # the key was never stored in the keyring), ssh-add prompts via the seahorse
-  # dialog; gcr-ssh-agent then persists the passphrase in the now-unlocked
-  # GNOME Keyring so subsequent logins need no prompt at all.
+  # Systemd user service: offer the SSH key to gcr-ssh-agent once per session.
+  #
+  # HOW gcr-ssh-agent STORES THE PASSPHRASE IN THE KEYRING:
+  #   gcr-ssh-agent (GCR 4) has its own built-in passphrase dialog (gcr-prompter,
+  #   a D-Bus service).  When ssh-add is run WITHOUT an external SSH_ASKPASS, the
+  #   agent intercepts the add request, shows its own dialog, and — crucially —
+  #   stores the encrypted key in the GNOME Keyring itself.  On subsequent logins
+  #   the PAM keyring-unlock (gdm-password) decrypts the keyring, and gcr-ssh-agent
+  #   auto-loads all stored keys with NO passphrase prompt.
+  #
+  #   If SSH_ASKPASS is set, an external binary supplies the passphrase to ssh-add,
+  #   which then hands gcr-ssh-agent a pre-decrypted key.  The agent never sees the
+  #   passphrase, so it CANNOT store anything in the keyring → passphrase prompt on
+  #   every reboot.  That is the bug this service previously caused.
+  #
+  # NORMAL OPERATION (key already stored in keyring):
+  #   After the first successful passphrase entry the check below ("ssh-add -l")
+  #   finds the key already loaded (gcr-ssh-agent auto-loaded it from the keyring
+  #   after PAM unlocked it at GDM login) and does nothing.
   systemd.user.services.ssh-key-add = {
     Unit = {
       Description = "Add SSH key to gcr-ssh-agent (GNOME Keyring)";
-      # Wait for the gcr-ssh-agent socket to be active before running ssh-add.
       After = [ "gcr-ssh-agent.socket" "graphical-session.target" ];
       Requires = [ "gcr-ssh-agent.socket" ];
       ConditionPathExists = sshKeyPath;
@@ -63,17 +74,15 @@ in
     };
     Service = {
       Type = "oneshot";
-      # Use the gcr-ssh-agent socket (%t = $XDG_RUNTIME_DIR)
-      Environment = [
-        "SSH_AUTH_SOCK=%t/gcr/ssh"
-        "SSH_ASKPASS=${pkgs.seahorse}/libexec/seahorse/ssh-askpass"
-        "SSH_ASKPASS_REQUIRE=prefer"
-      ];
-      # Inherit display variables so the askpass dialog can open
-      PassEnvironment = "DISPLAY WAYLAND_DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS";
-      # Only call ssh-add if the key is not already in the agent.
-      # After the GDM PAM keyring fix, gcr-ssh-agent will auto-load the key
-      # from the GNOME Keyring on login, making this a no-op in normal use.
+      # Only SSH_AUTH_SOCK is needed; NO SSH_ASKPASS so that gcr-ssh-agent
+      # uses its own gcr-prompter dialog and stores the key in the keyring.
+      Environment = [ "SSH_AUTH_SOCK=%t/gcr/ssh" ];
+      # gcr-prompter is a D-Bus service — pass the session bus address so
+      # the agent's dialog can appear on the Wayland/X display.
+      PassEnvironment = "DBUS_SESSION_BUS_ADDRESS DISPLAY WAYLAND_DISPLAY";
+      # Skip ssh-add when the key is already loaded (normal case after first
+      # successful passphrase entry — gcr-ssh-agent auto-loaded it from the
+      # GNOME Keyring when PAM unlocked it at login).
       ExecStart = toString (pkgs.writeShellScript "ssh-key-add" ''
         ${pkgs.openssh}/bin/ssh-add -l 2>/dev/null \
           | ${pkgs.gnugrep}/bin/grep -qF "${sshKeyName}" \
