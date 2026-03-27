@@ -22,9 +22,19 @@
   # the result. With AddKeysToAgent yes, the decrypted key is handed to the
   # GNOME Keyring agent after the first use and all subsequent git/ssh commands
   # in the same session work silently.
+  #
+  # enableDefaultConfig is set to false to silence the deprecation warning; the
+  # defaults that home-manager previously applied globally are preserved in the
+  # catch-all matchBlocks."*" block below.
   programs.ssh = {
     enable = true;
-    addKeysToAgent = "yes";
+    enableDefaultConfig = false;
+    matchBlocks."*" = {
+      addKeysToAgent = "yes";
+      # Preserve the home-manager defaults that would otherwise be dropped.
+      serverAliveInterval = 120;
+      serverAliveCountMax = 3;
+    };
   };
 
   # Systemd user service: add SSH key to GNOME Keyring once per session
