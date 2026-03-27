@@ -1,9 +1,11 @@
 { pkgs, ... }:
 
 let
-  # Path to the SSH key to be managed. Update this if your key file has a
+  # Filename of the SSH key to be managed. Update this if your key file has a
   # different name (e.g. id_rsa, id_ecdsa).
-  sshKeyPath = "%h/.ssh/id_ed25519";
+  sshKeyName = "id_ed25519";
+  # Systemd specifier path (used for ConditionPathExists)
+  sshKeyPath = "%h/.ssh/${sshKeyName}";
 in
 {
   # GUI tools for managing keys
@@ -42,9 +44,12 @@ in
   };
 
   # Systemd user service: add SSH key to the gcr-ssh-agent once per session.
-  # gcr-ssh-agent stores the passphrase in the GNOME Keyring so that on
-  # subsequent logins the key is unlocked automatically when the keyring is
-  # unlocked (e.g. at GDM login).
+  # The service first checks whether the key is already loaded (gcr-ssh-agent
+  # auto-loads keys stored in the GNOME Keyring after a successful GDM login).
+  # If the key is already present, nothing happens.  If not (first login after
+  # the key was never stored in the keyring), ssh-add prompts via the seahorse
+  # dialog; gcr-ssh-agent then persists the passphrase in the now-unlocked
+  # GNOME Keyring so subsequent logins need no prompt at all.
   systemd.user.services.ssh-key-add = {
     Unit = {
       Description = "Add SSH key to gcr-ssh-agent (GNOME Keyring)";
@@ -66,7 +71,14 @@ in
       ];
       # Inherit display variables so the askpass dialog can open
       PassEnvironment = "DISPLAY WAYLAND_DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS";
-      ExecStart = "${pkgs.openssh}/bin/ssh-add ${sshKeyPath}";
+      # Only call ssh-add if the key is not already in the agent.
+      # After the GDM PAM keyring fix, gcr-ssh-agent will auto-load the key
+      # from the GNOME Keyring on login, making this a no-op in normal use.
+      ExecStart = toString (pkgs.writeShellScript "ssh-key-add" ''
+        ${pkgs.openssh}/bin/ssh-add -l 2>/dev/null \
+          | ${pkgs.gnugrep}/bin/grep -qF "${sshKeyName}" \
+          || exec ${pkgs.openssh}/bin/ssh-add "$HOME/.ssh/${sshKeyName}"
+      '');
       RemainAfterExit = true;
     };
   };
