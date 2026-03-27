@@ -16,6 +16,17 @@
     SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
   };
 
+  # Tell SSH to cache keys in the agent after the first passphrase entry.
+  # Without this, SSH prompts for the passphrase on every connection even though
+  # an agent is running — because it uses the key file directly and never stores
+  # the result. With AddKeysToAgent yes, the decrypted key is handed to the
+  # GNOME Keyring agent after the first use and all subsequent git/ssh commands
+  # in the same session work silently.
+  programs.ssh = {
+    enable = true;
+    addKeysToAgent = "yes";
+  };
+
   # Systemd user service: add SSH key to GNOME Keyring once per session
   systemd.user.services.ssh-key-add = {
     Unit = {
