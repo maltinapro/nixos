@@ -118,13 +118,18 @@
       nix.settings.experimental-features = [ "nix-command" "flakes" ];
       system.stateVersion = "25.05";
 
-      # Unlock the GNOME Keyring when the user logs in via GDM.
-      # NixOS's services.gnome.gnome-keyring.enable (automatically set by GNOME)
-      # only adds the pam_gnome_keyring module to the 'login' PAM service (TTY).
-      # GDM uses the 'gdm-password' PAM service, so without this the keyring
-      # stays locked after graphical login — gcr-ssh-agent cannot read or store
-      # SSH key passphrases in the keyring, causing the passphrase dialog to
-      # appear on every reboot instead of just once.
+      # Unlock the GNOME Keyring at login so gcr-ssh-agent can auto-load SSH keys.
+      #
+      # Per the GNOME Keyring PAM guide, pam_gnome_keyring.so must be added to
+      # BOTH the TTY login service AND the graphical display manager service:
+      #
+      #   auth    optional  pam_gnome_keyring.so
+      #   session optional  pam_gnome_keyring.so auto_start
+      #
+      # NixOS's GNOME module sets enableGnomeKeyring on 'login' automatically, but
+      # GDM uses the separate 'gdm-password' service which needs it set explicitly.
+      # Setting both here is explicit, safe, and matches the upstream documentation.
+      security.pam.services.login.enableGnomeKeyring = true;
       security.pam.services.gdm-password.enableGnomeKeyring = true;
     };
 
