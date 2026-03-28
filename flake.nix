@@ -119,20 +119,9 @@
         fluffychat
 
         # GUI Markdown editor/viewer (Linux alternative to macOS flux-markdown).
-        # Native support for Mermaid diagrams, KaTeX math, Vega-Lite charts,
-        # GFM (tables, task lists), code highlighting, themes, and PDF/HTML export.
-        marktext
-      ];
-
-      # Workaround for marktext build failure: node-gyp not found (nixpkgs#494430)
-      nixpkgs.overlays = [
-        (final: prev: {
-          marktext = prev.marktext.overrideAttrs (oldAttrs: {
-            nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
-              final.node-gyp
-            ];
-          });
-        })
+        # Pre-built AppImage from the stable v0.17.1 release — avoids the broken
+        # source build in nixpkgs (nixpkgs#494430) and eliminates compile time.
+        (callPackage ./pkgs/marktext-bin.nix {})
       ];
 
       nixpkgs.config.allowUnfree = true;
