@@ -82,6 +82,11 @@
       services.displayManager.gdm.enable = true;
       services.desktopManager.gnome.enable = true;
 
+      # GNOME Keyring with PAM integration for SSH passphrase storage
+      services.gnome.gnome-keyring.enable = true;
+      security.pam.services.gdm.enableGnomeKeyring = true;
+      programs.seahorse.enable = true;
+
       services.xserver.xkb = {
         layout = "de";
         variant = "nodeadkeys";
