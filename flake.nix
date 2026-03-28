@@ -16,6 +16,13 @@
       url = "github:nix-community/nix4nvchad";
       inputs.nixpkgs.follows = "nixpkgs"; 
     };
+
+    # Track the latest stable MarkText release.
+    # To update: change the tag below and run `nix flake update marktext-src`.
+    marktext-src = {
+      url = "github:marktext/marktext/v0.17.1";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, lanzaboote, nixos-hardware, home-manager, ... }@inputs:
@@ -119,9 +126,10 @@
         fluffychat
 
         # GUI Markdown editor/viewer (Linux alternative to macOS flux-markdown).
-        # Pre-built AppImage from the stable v0.17.1 release — avoids the broken
+        # Pre-built AppImage from the latest stable release — avoids the broken
         # source build in nixpkgs (nixpkgs#494430) and eliminates compile time.
-        (callPackage ./pkgs/marktext-bin.nix {})
+        # Version is tracked via the marktext-src flake input (see inputs above).
+        (callPackage ./pkgs/marktext-bin.nix { inherit (inputs) marktext-src; })
       ];
 
       nixpkgs.config.allowUnfree = true;

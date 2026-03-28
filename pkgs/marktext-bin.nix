@@ -1,11 +1,16 @@
-{ appimageTools, fetchurl, lib }:
+{ appimageTools, fetchurl, lib, marktext-src }:
 
 let
   pname = "marktext";
-  version = "0.17.1";
+
+  # Read version from the flake input's package.json — not hardcoded.
+  # Update by changing the tag in flake.nix and running: nix flake update marktext-src
+  version = (builtins.fromJSON (builtins.readFile "${marktext-src}/package.json")).version;
 
   src = fetchurl {
     url = "https://github.com/marktext/marktext/releases/download/v${version}/marktext-x86_64.AppImage";
+    # When updating to a new version, replace this hash. Build once with
+    # lib.fakeHash to get the correct hash from the error message.
     hash = "sha256-LiVVET4334MLo5WO/MzOcCCQexL9QWI2jP2Qau2mMLc=";
   };
 
@@ -16,6 +21,7 @@ appimageTools.wrapType2 {
 
   extraInstallCommands = ''
     mkdir -p $out/share
+    # Some AppImages lack usr/share; ignore missing path errors.
     cp -r ${extracted}/usr/share/* $out/share/ 2>/dev/null || true
     # Fix desktop file to use the wrapper binary name
     if [ -f $out/share/applications/marktext.desktop ]; then
