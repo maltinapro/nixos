@@ -37,6 +37,12 @@
           vim.wo.winfixbuf = true
         end,
       })
+
+      -- Fix file watchers (e.g. fluxMarkdown) losing track of the file after the first save.
+      -- Neovim's default atomic save renames a temp file over the original, which changes
+      -- the inode and breaks inode-based watchers. Setting backupcopy = "yes"
+      -- makes Neovim write directly into the existing file instead, keeping the inode stable.
+      vim.opt.backupcopy = "yes"
     '';
 
     extraPackages = with pkgs; [
