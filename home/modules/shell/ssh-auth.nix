@@ -1,14 +1,9 @@
 { pkgs, ... }:
 
 {
-  # Install pinentry for GPG passphrase prompts in GNOME
-  home.packages = with pkgs; [
-    pinentry-gnome3
-  ];
-
   # Set the variables that tell SSH to use the GNOME Keyring agent
   home.sessionVariables = {
-    SSH_AUTH_SOCK = "/run/user/1000/keyring/ssh";
+    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
     SSH_ASKPASS = "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     SSH_ASKPASS_REQUIRE = "prefer";
   };
