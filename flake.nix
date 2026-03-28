@@ -118,10 +118,10 @@
         signal-desktop
         fluffychat
 
-        # GUI Markdown viewer with live preview (Linux alternative to macOS flux-markdown).
-        # Supports GFM, code highlighting, math (MathJax), TOC outline, themes, and
-        # PDF/HTML export via its bundled pandoc/cmark/multimarkdown pipeline.
-        ghostwriter
+        # GUI Markdown editor/viewer (Linux alternative to macOS flux-markdown).
+        # Native support for Mermaid diagrams, KaTeX math, Vega-Lite charts,
+        # GFM (tables, task lists), code highlighting, themes, and PDF/HTML export.
+        marktext
       ];
 
       nixpkgs.config.allowUnfree = true;
