@@ -124,6 +124,17 @@
         marktext
       ];
 
+      # Workaround for marktext build failure: node-gyp not found (nixpkgs#494430)
+      nixpkgs.overlays = [
+        (final: prev: {
+          marktext = prev.marktext.overrideAttrs (oldAttrs: {
+            nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
+              final.node-gyp
+            ];
+          });
+        })
+      ];
+
       nixpkgs.config.allowUnfree = true;
       nix.settings.experimental-features = [ "nix-command" "flakes" ];
       system.stateVersion = "25.05";
