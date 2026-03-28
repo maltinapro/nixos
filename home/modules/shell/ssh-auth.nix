@@ -1,11 +1,12 @@
 { pkgs, ... }:
 
 {
-  # Set the variables that tell SSH to use the GNOME Keyring agent
+  # Point SSH at the GNOME Keyring agent
+  # SSH_ASKPASS is intentionally NOT set here — in a terminal, SSH can
+  # prompt on the TTY.  The systemd service below supplies its own
+  # SSH_ASKPASS for the headless (no-TTY) context.
   home.sessionVariables = {
     SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
-    SSH_ASKPASS = "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
-    SSH_ASKPASS_REQUIRE = "prefer";
   };
 
   # Create a user-level service to add the key once when you log in
