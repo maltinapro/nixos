@@ -117,6 +117,11 @@
       environment.systemPackages = with pkgs; [
         signal-desktop
         fluffychat
+
+        # GUI Markdown viewer with live preview (Linux alternative to macOS flux-markdown).
+        # Supports GFM, code highlighting, math (MathJax), TOC outline, themes, and
+        # PDF/HTML export via its bundled pandoc/cmark/multimarkdown pipeline.
+        ghostwriter
       ];
 
       nixpkgs.config.allowUnfree = true;
