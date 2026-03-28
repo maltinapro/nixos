@@ -10,7 +10,13 @@
 
   programs.ssh = {
     enable = true;
-    addKeysToAgent = "yes";
+    enableDefaultConfig = false;
+
+    matchBlocks = {
+      "*" = {
+        addKeysToAgent = "yes";
+      };
+    };
   };
 
   # Load the SSH key into the agent at login — the NixOS equivalent of
