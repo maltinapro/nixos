@@ -216,8 +216,7 @@
         "lanzaboote": "lanzaboote",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
-        "nvchad": "nvchad",
-        "marktext-src": "marktext-src"
+        "nvchad": "nvchad"
       }
     },
     "rust-overlay": {
@@ -253,23 +252,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
-        "type": "github"
-      }
-    },
-    "marktext-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1646669765,
-        "narHash": "sha256-kCBF0rIYcnTT8YVH0k4F2UF7eXZ+/gFcFU+q3+1WF8A=",
-        "owner": "marktext",
-        "repo": "marktext",
-        "rev": "c8aa33ddcd41184ecac3bd5e67451569b32d8e38",
-        "type": "github"
-      },
-      "original": {
-        "owner": "marktext",
-        "ref": "v0.17.1",
-        "repo": "marktext",
         "type": "github"
       }
     }
