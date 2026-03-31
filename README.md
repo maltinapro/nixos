@@ -16,7 +16,7 @@ Install NixOS via the provided ISO image. The host-specific `configuration.nix` 
 ```bash
 # Apply changes:
 # The last segment is the profile name, e.g. thinkpad-test or thinkpad-media
-sudo nixos-rebuild switch --flake /etc/nixos#thinkpad-development
+nixos-rebuild switch --flake /etc/nixos#thinkpad-development
 
 # Update all inputs to their latest versions:
 nix flake update
