@@ -40,12 +40,13 @@ in
   home.sessionVariables = {
     SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gcr/ssh";
   };
-
+  
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
 
-    matchBlocks = {
+    # This is the correct, modern structure that Home Manager expects
+    settings = {
       "*" = {
         addKeysToAgent = "yes";
       };
