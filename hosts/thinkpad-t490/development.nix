@@ -20,6 +20,8 @@
     rustlings
     rust-analyzer
     gcc
+    pkg-config
+    openssl
   ];
   
   # Docker and Virtualization
