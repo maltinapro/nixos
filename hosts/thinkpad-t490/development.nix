@@ -20,10 +20,8 @@
     rustlings
     rust-analyzer
     gcc
-    pkg-config
-    openssl
   ];
-  
+
   # Docker and Virtualization
   virtualisation.docker.enable = true;
   users.extraGroups.docker.members = [ "user" ];
