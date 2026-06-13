@@ -20,6 +20,7 @@
     rustlings
     rust-analyzer
     gcc
+    typst
   ];
 
   # Docker and Virtualization
