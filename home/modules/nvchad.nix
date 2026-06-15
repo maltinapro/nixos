@@ -2,15 +2,12 @@
 
 {
   imports = [
-    # This uses the 'nvchad' input from your flake.nix
     inputs.nvchad.homeManagerModule 
   ];
 
   programs.nvchad = {
     enable = true;
 
-    # extraPlugins is injected as a lazy.nvim plugin spec (plugins/init-2.lua)
-    # This is the correct way to add plugins — extraConfig runs AFTER lazy is initialized
     extraPlugins = ''
       return {
         {
@@ -38,35 +35,24 @@
         end,
       })
 
-      -- Fix file watchers (e.g. live-preview tools) losing track of the file after the first save.
-      -- Neovim's default atomic save renames a temp file over the original, which changes
-      -- the inode and breaks inode-based watchers. Setting backupcopy = "yes"
-      -- makes Neovim write directly into the existing file instead, keeping the inode stable.
+      -- Fix file watchers
       vim.opt.backupcopy = "yes"
+
+      -- Setup LSP servers
+      local lspconfig = require("lspconfig")
+      
+      lspconfig.rust_analyzer.setup({})
+      lspconfig.marksman.setup({})
     '';
 
     extraPackages = with pkgs; [
-      # --- Rust Essentials ---
-      rust-analyzer      # The "Brain" (LSP) for code completion and errors
-      rustfmt            # Automatically formats your code
-      clippy             # Catches common mistakes (the Rust "Linter")
-      cargo              # Package manager
-      rustc              # The compiler
+      # Tools needed specifically by NvChad, not included in development.nix
+      ripgrep    # Required for Telescope search
+      fd         # Fast file finder
       
-      # --- NvChad / Neovim Essentials ---
-      ripgrep            # Required for NvChad's "Telescope" search
-      fd                 # Fast file finder
-      gcc                # Needed for compiling some Neovim plugins (Treesitter)
-      
-      # --- Version Control ---
-      git                # Required for Git status, branches, and Gitsigns
-      
-      # --- Debugging ---
-      lldb               # Debugger (works great with Rust)
-
-      # --- Markdown ---
-      vimPlugins.render-markdown-nvim  # Plugin managed by Nix, placed on rtp
-      marksman                         # Markdown LSP (go-to-definition, link checking)
+      # Optional: For render-markdown plugin
+      vimPlugins.render-markdown-nvim
     ];
   };
 }
+

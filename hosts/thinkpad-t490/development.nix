@@ -21,6 +21,7 @@
     rust-analyzer
     gcc
     typst
+    marksman
   ];
 
   # Docker and Virtualization
