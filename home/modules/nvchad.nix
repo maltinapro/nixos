@@ -38,11 +38,10 @@
       -- Fix file watchers
       vim.opt.backupcopy = "yes"
 
-      -- Setup LSP servers
-      local lspconfig = require("lspconfig")
-      
-      lspconfig.rust_analyzer.setup({})
-      lspconfig.marksman.setup({})
+      -- Setup LSP servers (vim.lsp.config, Neovim 0.11+)
+      vim.lsp.config("rust_analyzer", {})
+      vim.lsp.config("marksman", {})
+      vim.lsp.enable({ "rust_analyzer", "marksman" })
     '';
 
     extraPackages = with pkgs; [
