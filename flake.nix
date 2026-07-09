@@ -4,8 +4,9 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v1.0.0";
+      url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -52,6 +53,7 @@
         ./hardware-configuration.nix 
         nixos-hardware.nixosModules.lenovo-thinkpad-t490
         ./modules/fonts.nix
+        ./modules/throttled.nix
       ];
 
       # Bootloader settings
@@ -103,7 +105,7 @@
         alsa.support32Bit = true;
         pulse.enable = true;
       };
-
+    
       users.users.maltina = {
         isNormalUser = true;
         description = "Maltina Basse";
