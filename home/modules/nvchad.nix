@@ -2,7 +2,7 @@
 
 {
   imports = [
-    inputs.nvchad.homeManagerModule 
+    inputs.nvchad.homeManagerModules
   ];
 
   programs.nvchad = {
