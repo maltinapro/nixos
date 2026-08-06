@@ -2,7 +2,7 @@
 
 {
   imports = [
-    inputs.nvchad.homeManagerModule 
+    inputs.nvchad.homeManagerModules.default
   ];
 
   programs.nvchad = {
@@ -24,6 +24,7 @@
             link     = { enabled = true },
           },
         },
+        { "tpope/vim-fugitive", lazy = false },
       }
     ''; 
 
