@@ -24,7 +24,7 @@
             link     = { enabled = true },
           },
         },
-        { "tpope/vim-fugitive" },
+        { "tpope/vim-fugitive", lazy = false },
       }
     ''; 
 
