@@ -43,7 +43,7 @@
         },
         {
           "nickjvandyke/opencode.nvim",
-          cmd = { "OpenCodeAsk", "OpenCodeSelect" },
+          event = "VeryLazy",
           opts = {},
         },
       }
@@ -68,6 +68,8 @@
       -- Copilot auth helpers
       vim.keymap.set("n", "<leader>ca", "<cmd>Copilot auth<CR>", { desc = "Copilot auth" })
       vim.keymap.set("n", "<leader>ci", "<cmd>Copilot auth info<CR>", { desc = "Copilot auth info" })
+      vim.keymap.set({ "n", "x" }, "<leader>oa", function() require("opencode").ask("@this: ") end, { desc = "OpenCode ask" })
+      vim.keymap.set({ "n", "x" }, "<leader>os", function() require("opencode").select() end, { desc = "OpenCode select" })
 
       -- Add Copilot as a cmp source when available
       local ok_cmp, cmp = pcall(require, "cmp")
