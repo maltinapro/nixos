@@ -146,6 +146,32 @@ return {
         return false
       end
 
+      local function patch_avante_copilot_provider()
+        local ok, provider = pcall(require, "avante.providers.copilot")
+        if not ok or type(provider) ~= "table" then
+          return
+        end
+        if provider._maltina_parse_curl_args_patched then
+          return
+        end
+        if type(provider.parse_curl_args) ~= "function" then
+          return
+        end
+
+        local original_parse_curl_args = provider.parse_curl_args
+        provider.parse_curl_args = function(self, prompt_opts)
+          if not self._is_setup and type(self.setup) == "function" then
+            local setup_ok, setup_err = pcall(self.setup)
+            if not setup_ok then
+              error(setup_err)
+            end
+          end
+          return original_parse_curl_args(self, prompt_opts)
+        end
+
+        provider._maltina_parse_curl_args_patched = true
+      end
+
       ensure_avante_prompt_sign()
       ensure_copilot_hosts_json()
       pcall(function()
@@ -160,6 +186,7 @@ return {
         return
       end
 
+      patch_avante_copilot_provider()
       local setup_ok, err = pcall(avante.setup, opts)
       if not setup_ok then
         vim.schedule(function()
