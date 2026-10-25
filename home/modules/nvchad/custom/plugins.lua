@@ -36,7 +36,7 @@ return {
   },
   {
     "yetone/avante.nvim",
-    event = "VeryLazy",
+    lazy = true,
     version = false,
     build = "make",
     opts = {
@@ -54,6 +54,7 @@ return {
       "nvim-tree/nvim-web-devicons",
     },
     cmd = {
+      "Avante",
       "AvanteAsk",
       "AvanteEdit",
       "AvanteRefresh",
