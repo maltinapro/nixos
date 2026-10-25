@@ -40,6 +40,13 @@ If Avante reports `You must setup copilot` or `missing avante_templates`, run:
 
 Then fully restart Neovim.
 
+If it still fails, verify Copilot and Avante build state:
+
+```vim
+:Copilot status
+:Lazy build avante.nvim
+```
+
 `<leader>` is `Space` in NvChad.
 
 ### Avante shortcuts (`<leader>a...`)
