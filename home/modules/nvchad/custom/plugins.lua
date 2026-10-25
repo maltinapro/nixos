@@ -18,8 +18,8 @@ return {
   },
   {
     "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "VeryLazy",
+    lazy = false,
+    priority = 900,
     opts = {
       suggestion = { enabled = false },
       panel = { enabled = false },
