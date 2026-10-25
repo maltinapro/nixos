@@ -125,7 +125,10 @@ return {
         if not plugin_dir or plugin_dir == "" then
           return false
         end
-        return vim.fn.isdirectory(plugin_dir .. "/avante_templates") == 1
+        local so_ok = vim.fn.filereadable(plugin_dir .. "/lua/avante_templates.so") == 1
+        local dylib_ok = vim.fn.filereadable(plugin_dir .. "/lua/avante_templates.dylib") == 1
+        local dll_ok = vim.fn.filereadable(plugin_dir .. "/lua/avante_templates.dll") == 1
+        return so_ok or dylib_ok or dll_ok
       end
 
       local function ensure_avante_templates(plugin_dir)
@@ -142,32 +145,10 @@ return {
         return false
       end
 
-      local function ensure_copilot_ready()
-        local client_ok, client = pcall(require, "copilot.client")
-        if not client_ok or not client then
-          return false
-        end
-
-        if type(client.is_disabled) == "function" and client.is_disabled() then
-          return false
-        end
-
-        return true
-      end
-
       ensure_avante_prompt_sign()
       ensure_copilot_hosts_json()
       local plugin_dir = get_avante_plugin_dir()
       if not ensure_avante_templates(plugin_dir) then
-        return
-      end
-      if not ensure_copilot_ready() then
-        vim.schedule(function()
-          vim.notify(
-            "Copilot is not ready. Run :Copilot auth and restart Neovim.",
-            vim.log.levels.ERROR
-          )
-        end)
         return
       end
       local ok, avante = pcall(require, "avante")
