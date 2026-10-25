@@ -77,6 +77,7 @@
       gcc                # Needed for compiling some Neovim plugins (Treesitter)
       nodejs_22          # Required by Copilot language server/client (copilot.lua needs Node >=22 for nodejs server)
       unzip              # Needed by copilot.lua to unpack copilot-language-server
+      sqlite             # Enables auth.db token compatibility bridge for Avante Copilot provider
 
       # --- Version Control ---
       git                # Required for Git status, branches, and Gitsigns
