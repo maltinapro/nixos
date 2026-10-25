@@ -29,7 +29,7 @@ This setup pins `copilot.lua` to a v2 release for Avante compatibility.
 After rebuilding, open Neovim and authenticate once with:
 
 ```vim
-:Copilot auth
+:Copilot auth signin
 ```
 
 If Avante reports `You must setup copilot` or `missing avante_templates`, run:

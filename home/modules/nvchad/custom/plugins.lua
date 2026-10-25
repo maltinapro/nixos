@@ -20,6 +20,7 @@ return {
     "zbirenbaum/copilot.lua",
     commit = "b1482409cefe8b201f89122c682189fabf0436da",
     lazy = true,
+    event = "VeryLazy",
     cmd = { "Copilot" },
     opts = {
       server = { type = "nodejs" },
