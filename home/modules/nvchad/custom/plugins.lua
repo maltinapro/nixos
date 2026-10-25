@@ -36,11 +36,37 @@ return {
       require("copilot").setup(opts)
 
       local client_ok, client = pcall(require, "copilot.client")
-      if client_ok and client and type(client.use_client) == "function" then
+      if client_ok and client and type(client.use_client) == "function" and not client._maltina_use_client_patched then
         local original_use_client = client.use_client
+        local function wait_for_client_ready(callback, timeout_ms)
+          local start = vim.loop.now()
+          local interval_ms = 250
+
+          local function tick()
+            local started = client.get and client.get() or nil
+            local initialized = client.initialized == true
+            if started and initialized then
+              callback(started)
+              return
+            end
+
+            if (vim.loop.now() - start) >= timeout_ms then
+              vim.notify(
+                "Copilot client is not ready yet. Run :Copilot status and retry :Copilot auth signin.",
+                vim.log.levels.WARN
+              )
+              return
+            end
+
+            vim.defer_fn(tick, interval_ms)
+          end
+
+          tick()
+        end
+
         client.use_client = function(callback)
           local existing = client.get and client.get() or nil
-          if existing then
+          if existing and client.initialized == true then
             return original_use_client(callback)
           end
 
@@ -48,18 +74,9 @@ return {
             client.ensure_client_started()
           end
 
-          vim.defer_fn(function()
-            local started = client.get and client.get() or nil
-            if started then
-              callback(started)
-            else
-              vim.notify(
-                "Copilot client is not ready yet. Run :Copilot status and retry auth.",
-                vim.log.levels.WARN
-              )
-            end
-          end, 1200)
+          wait_for_client_ready(callback, 12000)
         end
+        client._maltina_use_client_patched = true
       end
     end,
   },
