@@ -147,6 +147,9 @@ return {
 
       ensure_avante_prompt_sign()
       ensure_copilot_hosts_json()
+      pcall(function()
+        require("lazy").load({ plugins = { "copilot.lua" } })
+      end)
       local plugin_dir = get_avante_plugin_dir()
       if not ensure_avante_templates(plugin_dir) then
         return
