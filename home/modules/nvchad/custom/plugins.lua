@@ -21,6 +21,8 @@ return {
     cmd = "Copilot",
     event = "InsertEnter",
     opts = {
+      -- The default prebuilt binary can't run on NixOS; use Node.js (>= 22) from extraPackages.
+      server = { type = "nodejs" },
       suggestion = { enabled = false },
       panel = { enabled = false },
       filetypes = {

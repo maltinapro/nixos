@@ -30,6 +30,8 @@ After rebuilding, open Neovim and authenticate once with:
 :Copilot auth
 ```
 
+`copilot.lua` runs its language server with Node.js (`server.type = "nodejs"`), because the prebuilt binary it downloads by default cannot run on NixOS.
+
 Copilot Chat shortcuts (`<leader>` is `Space` in NvChad):
 
 - `<leader>co` open chat (approval prompt)
@@ -51,7 +53,7 @@ Useful Copilot Chat commands:
 :CopilotChatStrictMode on
 ```
 
-Avante (`avante.nvim`) reuses the Copilot login (`provider = "copilot"`, so run `:Copilot auth` once first) and runs alongside Copilot Chat. Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
+Avante (`avante.nvim`) reuses the login created by `:Copilot auth` (`provider = "copilot"`) and runs alongside Copilot Chat. Authenticate first and restart Neovim afterwards; without a login Avante fails to start with `You must setup copilot with either copilot.lua or copilot.vim`. Its native libraries are compiled with `make` on the first start (this takes a few minutes; retry with `:Lazy build avante.nvim` if it failed). Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
 
 - `<leader>aa` ask Avante (normal/visual)
 - `<leader>ae` edit selection (visual)

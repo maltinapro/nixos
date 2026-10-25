@@ -75,10 +75,11 @@
 
       # --- NvChad / Neovim Essentials ---
       gcc                # Needed for compiling some Neovim plugins (Treesitter)
-      nodejs             # Required by Copilot language server/client
+      gnumake            # Needed to build avante.nvim (`make`)
+      perl               # Needed by avante.nvim's vendored OpenSSL build
+      nodejs             # Runs the Copilot language server (copilot.lua, Node.js >= 22)
 
       # --- Version Control ---
-      gnumake            # Required to build avante.nvim
       git                # Required for Git status, branches, and Gitsigns
 
       # --- Debugging ---
