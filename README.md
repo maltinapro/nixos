@@ -51,7 +51,7 @@ Useful Copilot Chat commands:
 :CopilotChatStrictMode on
 ```
 
-Avante (`avante.nvim`) uses the same Copilot login (`provider = "copilot"`) and runs alongside Copilot Chat. Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
+Avante (`avante.nvim`) reuses the Copilot login (`provider = "copilot"`, so run `:Copilot auth` once first) and runs alongside Copilot Chat. Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
 
 - `<leader>aa` ask Avante (normal/visual)
 - `<leader>ae` edit selection (visual)
