@@ -18,7 +18,7 @@ return {
   },
   {
     "zbirenbaum/copilot.lua",
-    commit = "b1482409cefe8b201f89122c682189fabf0436da",
+    version = false,
     lazy = true,
     event = "VeryLazy",
     cmd = { "Copilot" },
@@ -34,50 +34,6 @@ return {
     },
     config = function(_, opts)
       require("copilot").setup(opts)
-
-      local client_ok, client = pcall(require, "copilot.client")
-      if client_ok and client and type(client.use_client) == "function" and not client._maltina_use_client_patched then
-        local original_use_client = client.use_client
-        local function wait_for_client_ready(callback, timeout_ms)
-          local start = vim.loop.now()
-          local interval_ms = 250
-
-          local function tick()
-            local started = client.get and client.get() or nil
-            local initialized = client.initialized == true
-            if started and initialized then
-              callback(started)
-              return
-            end
-
-            if (vim.loop.now() - start) >= timeout_ms then
-              vim.notify(
-                "Copilot client is not ready yet. Run :Copilot status and retry :Copilot auth signin.",
-                vim.log.levels.WARN
-              )
-              return
-            end
-
-            vim.defer_fn(tick, interval_ms)
-          end
-
-          tick()
-        end
-
-        client.use_client = function(callback)
-          local existing = client.get and client.get() or nil
-          if existing and client.initialized == true then
-            return original_use_client(callback)
-          end
-
-          if type(client.ensure_client_started) == "function" then
-            client.ensure_client_started()
-          end
-
-          wait_for_client_ready(callback, 12000)
-        end
-        client._maltina_use_client_patched = true
-      end
     end,
   },
   {
@@ -119,6 +75,44 @@ return {
         })
       end
 
+      local function ensure_copilot_hosts_json()
+        local config_dir = vim.env.XDG_CONFIG_HOME
+        if not config_dir or config_dir == "" then
+          config_dir = vim.fn.expand("~/.config")
+        end
+
+        local copilot_dir = config_dir .. "/github-copilot"
+        local hosts_path = copilot_dir .. "/hosts.json"
+        local apps_path = copilot_dir .. "/apps.json"
+        if vim.fn.filereadable(hosts_path) == 1 or vim.fn.filereadable(apps_path) == 1 then
+          return
+        end
+
+        local token = vim.env.GH_COPILOT_TOKEN
+        if not token or token == "" then
+          token = vim.env.GITHUB_COPILOT_TOKEN
+        end
+
+        if (not token or token == "") and vim.fn.executable("sqlite3") == 1 then
+          local auth_db_path = copilot_dir .. "/auth.db"
+          if vim.fn.filereadable(auth_db_path) == 1 then
+            local dump = table.concat(vim.fn.systemlist({ "sqlite3", auth_db_path, ".dump" }), "\n")
+            token = dump:match([["oauth_token"%s*:%s*"([^"]+)"]])
+              or dump:match([["token"%s*:%s*"([^"]+)"]])
+          end
+        end
+
+        if token and token ~= "" then
+          vim.fn.mkdir(copilot_dir, "p")
+          local payload = vim.json.encode({
+            ["github.com"] = {
+              oauth_token = token,
+            },
+          })
+          vim.fn.writefile({ payload }, hosts_path)
+        end
+      end
+
       local function get_avante_plugin_dir()
         local lazy_ok, lazy_config = pcall(require, "lazy.core.config")
         if not lazy_ok or not lazy_config.options or not lazy_config.options.root then
@@ -152,6 +146,7 @@ return {
       end
 
       ensure_avante_prompt_sign()
+      ensure_copilot_hosts_json()
       pcall(function()
         require("lazy").load({ plugins = { "copilot.lua" } })
       end)

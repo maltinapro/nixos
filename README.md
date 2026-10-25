@@ -24,7 +24,7 @@ nix flake update
 
 ## GitHub Copilot + Avante in Neovim (NvChad)
 
-This setup pins `copilot.lua` to a v2 release for Avante compatibility.
+This setup uses current `copilot.lua` and adds an Avante compatibility bridge for Copilot credentials.
 
 After rebuilding, open Neovim and authenticate once with:
 
