@@ -59,28 +59,9 @@ return {
     opts = {
       -- Reuse the Copilot login from copilot.lua (:Copilot auth).
       provider = "copilot",
-      -- Default mappings (<leader>aa/ae/ar...) are kept for avante; CopilotChat uses <leader>c*.
-      mappings = {
-        ask = "<leader>aa",
-        edit = "<leader>ae",
-        refresh = "<leader>aR",
-        focus = "<leader>af",
-        toggle = {
-          default = "<leader>at",
-          debug = "<leader>ad",
-          hint = "<leader>ah",
-          suggestion = "<leader>as",
-          repomap = "<leader>aM",
-        },
-        files = {
-          add_current = "<leader>ac",
-          add_all_buffers = "<leader>aB",
-        },
-        select_model = "<leader>a?",
-        select_history = "<leader>aH",
-      },
+      -- Keymaps are defined in custom/mappings.lua.
       -- Copilot.lua already provides inline suggestions; keep avante's off.
-      behaviour = { auto_suggestions = false },
+      behaviour = { auto_suggestions = false, auto_set_keymaps = false },
     },
   },
 }
