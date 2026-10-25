@@ -65,14 +65,15 @@ return {
       "ColinKennedy/mega.cmdparse",
       "ColinKennedy/mega.logging",
       "nvim-tree/nvim-web-devicons",
-      "zbirenbaum/copilot.lua",
     },
     opts = {
-      -- Reuse the Copilot login from copilot.lua (:Copilot auth).
+      -- Reuse the Copilot login from `:Copilot auth` (see custom/configs/avante.lua).
       provider = "copilot",
-      -- Keymaps are defined in custom/mappings.lua.
-      -- Copilot.lua already provides inline suggestions; keep avante's off.
+      -- Keymaps are defined in custom/mappings.lua; avante's experimental auto suggestions stay off.
       behaviour = { auto_suggestions = false, auto_set_keymaps = false },
     },
+    config = function(_, opts)
+      require("custom.configs.avante").setup(opts)
+    end,
   },
 }
