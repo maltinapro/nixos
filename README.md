@@ -55,6 +55,8 @@ Useful Copilot Chat commands:
 
 Avante (`avante.nvim`) runs alongside Copilot Chat with `provider = "copilot"`. It reuses the login from `:Copilot auth`: since copilot.lua 3.0 the language server keeps that login in `~/.config/github-copilot/auth.db` instead of `hosts.json`/`apps.json`, which is the only place Avante itself looks. `custom/configs/avante.lua` therefore reads the token from `auth.db` (with `sqlite3`, installed via `extraPackages`) and hands it to Avante. If that is not possible it falls back to the login Copilot Chat caches (`:CopilotChatModels` signs in) and finally to Avante's own lookup of a legacy `hosts.json`/`apps.json`. Restart Neovim after logging in; without any login Avante shows a warning instead of starting.
 
+> **Note:** `custom/configs/avante.lua` is a workaround for the open Avante issues [#3170](https://github.com/avante-corp/avante.nvim/issues/3170) and [#3121](https://github.com/avante-corp/avante.nvim/issues/3121). Once Avante reads `auth.db` itself, the helper (and `sqlite` in `extraPackages`) can be removed.
+
 Avante's native libraries are compiled with `make` (cargo) on the first start. This takes several minutes (lazy.nvim's process timeout is raised to 30 minutes for this build). If it was interrupted or failed, run `:Lazy build avante.nvim` again; cargo continues with what is already compiled. Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
 
 - `<leader>aa` ask Avante (normal/visual)

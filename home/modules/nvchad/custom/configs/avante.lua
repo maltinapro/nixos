@@ -2,6 +2,10 @@
 -- ~/.config/github-copilot/{hosts,apps}.json files. Since copilot.lua 3.0 the language
 -- server (`:Copilot auth`) keeps the login in ~/.config/github-copilot/auth.db instead,
 -- so hand that token (or the one Copilot Chat cached) to Avante's copilot provider.
+--
+-- NOTE: This is a workaround for the open upstream issues
+-- avante-corp/avante.nvim#3170 and #3121. Once Avante reads auth.db itself, remove this
+-- file, its `config` in plugins.lua, `sqlite` in nvchad.nix and the home.file link.
 local M = {}
 
 local function usable(token)
