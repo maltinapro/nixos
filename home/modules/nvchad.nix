@@ -78,6 +78,7 @@
       nodejs             # Required by Copilot language server/client
 
       # --- Version Control ---
+      gnumake            # Required to build avante.nvim
       git                # Required for Git status, branches, and Gitsigns
 
       # --- Debugging ---

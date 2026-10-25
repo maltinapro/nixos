@@ -32,13 +32,13 @@ After rebuilding, open Neovim and authenticate once with:
 
 Copilot Chat shortcuts (`<leader>` is `Space` in NvChad):
 
-- `<leader>ao` open chat (approval prompt)
-- `<leader>ae` explain selection/code (approval prompt)
-- `<leader>ar` review code (approval prompt)
-- `<leader>af` fix code (approval prompt)
-- `<leader>at` generate tests (approval prompt)
-- `<leader>aw` send workspace context (`git status` + `fd` listing, approval prompt)
-- `<leader>ax` execute last `bash` block from chat (approval prompt)
+- `<leader>co` open chat (approval prompt)
+- `<leader>ce` explain selection/code (approval prompt)
+- `<leader>cr` review code (approval prompt)
+- `<leader>cf` fix code (approval prompt)
+- `<leader>ct` generate tests (approval prompt)
+- `<leader>cw` send workspace context (`git status` + `fd` listing, approval prompt)
+- `<leader>cx` execute last `bash` block from chat (approval prompt)
 
 Useful Copilot Chat commands:
 
@@ -50,6 +50,18 @@ Useful Copilot Chat commands:
 :CopilotChatStrictMode status
 :CopilotChatStrictMode on
 ```
+
+Avante (`avante.nvim`) uses the same Copilot login (`provider = "copilot"`) and runs alongside Copilot Chat. Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
+
+- `<leader>aa` ask Avante (normal/visual)
+- `<leader>ae` edit selection (visual)
+- `<leader>at` toggle sidebar
+- `<leader>af` focus sidebar
+- `<leader>aR` refresh sidebar
+- `<leader>ac` add current buffer to context
+- `<leader>aB` add all buffers to context
+- `<leader>a?` select model, `<leader>aH` select history
+- `<leader>as` toggle suggestions, `<leader>ad` toggle debug, `<leader>aM` toggle repo map
 
 Notes:
 
