@@ -75,7 +75,10 @@
 
       # --- NvChad / Neovim Essentials ---
       gcc                # Needed for compiling some Neovim plugins (Treesitter)
-      nodejs             # Required by Copilot language server/client
+      gnumake            # Needed to build avante.nvim (`make`)
+      perl               # Needed by avante.nvim's vendored OpenSSL build
+      nodejs             # Runs the Copilot language server (copilot.lua, Node.js >= 22)
+      sqlite             # Lets avante.nvim read the Copilot login from auth.db (`sqlite3`)
 
       # --- Version Control ---
       git                # Required for Git status, branches, and Gitsigns
@@ -87,6 +90,7 @@
 
   home.file.".config/nvim/lua/custom/plugins.lua".source = ./nvchad/custom/plugins.lua;
   home.file.".config/nvim/lua/custom/mappings.lua".source = ./nvchad/custom/mappings.lua;
+  home.file.".config/nvim/lua/custom/configs/avante.lua".source = ./nvchad/custom/configs/avante.lua;
   home.file.".config/nvim/lua/custom/configs/copilotchat.lua".source = ./nvchad/custom/configs/copilotchat.lua;
   home.file.".config/nvim/lua/custom/configs/copilotchat_tools.lua".source = ./nvchad/custom/configs/copilotchat_tools.lua;
 }
