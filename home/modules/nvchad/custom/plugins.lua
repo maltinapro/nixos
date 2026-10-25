@@ -21,6 +21,8 @@ return {
     lazy = false,
     priority = 900,
     opts = {
+      server = { type = "nodejs" },
+      copilot_node_command = "node",
       suggestion = { enabled = false },
       panel = { enabled = false },
       filetypes = {

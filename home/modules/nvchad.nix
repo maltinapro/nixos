@@ -75,7 +75,7 @@
 
       # --- NvChad / Neovim Essentials ---
       gcc                # Needed for compiling some Neovim plugins (Treesitter)
-      nodejs             # Required by Copilot language server/client
+      nodejs_22          # Required by Copilot language server/client (copilot.lua needs Node >=22 for nodejs server)
       unzip              # Needed by copilot.lua to unpack copilot-language-server
 
       # --- Version Control ---
