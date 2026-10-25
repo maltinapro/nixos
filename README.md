@@ -22,7 +22,7 @@ nixos-rebuild switch --flake /etc/nixos#thinkpad-development
 nix flake update
 ```
 
-## GitHub Copilot in Neovim (NvChad)
+## GitHub Copilot + Avante in Neovim (NvChad)
 
 After rebuilding, open Neovim and authenticate once with:
 
@@ -30,15 +30,28 @@ After rebuilding, open Neovim and authenticate once with:
 :Copilot auth
 ```
 
-Copilot Chat shortcuts (`<leader>` is `Space` in NvChad):
+`<leader>` is `Space` in NvChad.
 
-- `<leader>ao` open chat (approval prompt)
-- `<leader>ae` explain selection/code (approval prompt)
-- `<leader>ar` review code (approval prompt)
-- `<leader>af` fix code (approval prompt)
-- `<leader>at` generate tests (approval prompt)
-- `<leader>aw` send workspace context (`git status` + `fd` listing, approval prompt)
-- `<leader>ax` execute last `bash` block from chat (approval prompt)
+### Avante shortcuts (`<leader>a...`)
+
+- `<leader>aa` ask Avante
+- `<leader>ae` edit/refactor with Avante
+- `<leader>at` toggle Avante panel
+- `<leader>ar` refresh Avante context
+
+Visual mode:
+- Select code, then use `<leader>aa` to ask with selection context
+- Select code, then use `<leader>ae` to edit/refactor selection
+
+### Copilot Chat shortcuts (`<leader>c...`)
+
+- `<leader>co` open chat (approval prompt)
+- `<leader>ce` explain selection/code (approval prompt)
+- `<leader>cr` review code (approval prompt)
+- `<leader>cf` fix code (approval prompt)
+- `<leader>ct` generate tests (approval prompt)
+- `<leader>cw` send workspace context (`git status` + `fd` listing, approval prompt)
+- `<leader>cx` execute last `bash` block from chat (approval prompt)
 
 Useful Copilot Chat commands:
 
@@ -49,10 +62,4 @@ Useful Copilot Chat commands:
 :CopilotChatExecLast
 :CopilotChatStrictMode status
 :CopilotChatStrictMode on
-```
 
-Notes:
-
-- `:CopilotChatRun` asks Copilot to generate exactly one `bash` command; it does not execute automatically.
-- Execute generated commands with `:CopilotChatExecLast`, then approve the action.
-- Strict mode is enabled by default and blocks risky command patterns.

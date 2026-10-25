@@ -19,7 +19,7 @@ return {
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
-    event = "InsertEnter",
+    event = "VeryLazy",
     opts = {
       suggestion = { enabled = false },
       panel = { enabled = false },
@@ -27,6 +27,33 @@ return {
         markdown = true,
         help = false,
       },
+    },
+    config = function(_, opts)
+      require("copilot").setup(opts)
+    end,
+  },
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    version = false,
+    build = "make",
+    opts = {
+      provider = "copilot",
+      auto_suggestions_provider = "copilot",
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "zbirenbaum/copilot.lua",
+      "MeanderingProgrammer/render-markdown.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    cmd = {
+      "AvanteAsk",
+      "AvanteEdit",
+      "AvanteRefresh",
+      "AvanteToggle",
     },
   },
   {
@@ -46,3 +73,4 @@ return {
     },
   },
 }
+
