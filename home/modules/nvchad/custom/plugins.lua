@@ -19,8 +19,7 @@ return {
   {
     "zbirenbaum/copilot.lua",
     lazy = true,
-    event = "InsertEnter",
-    cmd = { "Copilot" },
+    cmd = { "Copilot", "CopilotAuth", "CopilotStatus" },
     opts = {
       server = { type = "nodejs" },
       copilot_node_command = "node",
@@ -134,33 +133,13 @@ return {
           return true
         end
 
-        if vim.g.avante_build_attempted then
-          return has_avante_templates(plugin_dir)
-        end
-        vim.g.avante_build_attempted = true
-
-        if vim.fn.executable("make") ~= 1 then
-          vim.schedule(function()
-            vim.notify(
-              "Avante build is missing and 'make' is not available. Rebuild your Nix config, then run :Lazy build avante.nvim.",
-              vim.log.levels.ERROR
-            )
-          end)
-          return false
-        end
-
-        vim.fn.system({ "make", "-C", plugin_dir })
-        if vim.v.shell_error ~= 0 or not has_avante_templates(plugin_dir) then
-          vim.schedule(function()
-            vim.notify(
-              "Avante build failed. Run :Lazy build avante.nvim and restart Neovim.",
-              vim.log.levels.ERROR
-            )
-          end)
-          return false
-        end
-
-        return true
+        vim.schedule(function()
+          vim.notify(
+            "Avante build files are missing. Run :Lazy build avante.nvim and restart Neovim.",
+            vim.log.levels.ERROR
+          )
+        end)
+        return false
       end
 
       local function ensure_copilot_ready()

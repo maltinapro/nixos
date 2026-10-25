@@ -47,7 +47,7 @@ If it still fails, verify Copilot and Avante build state:
 :Lazy build avante.nvim
 ```
 
-Note: on first use, `copilot.lua` downloads the Copilot server once. During this step Neovim can feel slow; wait until the download finishes.
+Note: on first use, `copilot.lua` downloads the Copilot server once. To avoid startup freezes, Copilot is loaded on-demand (via `:Copilot`/Avante) instead of during normal typing.
 
 `<leader>` is `Space` in NvChad.
 
