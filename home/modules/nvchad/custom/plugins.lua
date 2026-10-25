@@ -38,7 +38,7 @@ return {
     "yetone/avante.nvim",
     lazy = true,
     version = false,
-    build = "make",
+    build = "make luajit-tokenizers luajit-templates luajit-repo-map",
     opts = {
       provider = "copilot",
       auto_suggestions_provider = "copilot",

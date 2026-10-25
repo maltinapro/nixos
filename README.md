@@ -47,6 +47,8 @@ If it still fails, verify Copilot and Avante build state:
 :Lazy build avante.nvim
 ```
 
+The Avante build is configured to compile the required modules (`tokenizers`, `templates`, `repo-map`) and skip the heavy `html2md` target that can timeout on some machines.
+
 Note: on first use, `copilot.lua` downloads the Copilot server once. To avoid startup freezes, Copilot is loaded on-demand (via `:Copilot`/Avante) instead of during normal typing.
 
 `<leader>` is `Space` in NvChad.
