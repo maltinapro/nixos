@@ -44,6 +44,8 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
+      "ColinKennedy/mega.logging",
+      "ColinKennedy/mega.cmdparse",
       "nvim-treesitter/nvim-treesitter",
       "zbirenbaum/copilot.lua",
       "MeanderingProgrammer/render-markdown.nvim",
@@ -73,4 +75,3 @@ return {
     },
   },
 }
-
