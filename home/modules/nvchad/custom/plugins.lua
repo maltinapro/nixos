@@ -34,6 +34,33 @@ return {
     },
     config = function(_, opts)
       require("copilot").setup(opts)
+
+      local client_ok, client = pcall(require, "copilot.client")
+      if client_ok and client and type(client.use_client) == "function" then
+        local original_use_client = client.use_client
+        client.use_client = function(callback)
+          local existing = client.get and client.get() or nil
+          if existing then
+            return original_use_client(callback)
+          end
+
+          if type(client.ensure_client_started) == "function" then
+            client.ensure_client_started()
+          end
+
+          vim.defer_fn(function()
+            local started = client.get and client.get() or nil
+            if started then
+              callback(started)
+            else
+              vim.notify(
+                "Copilot client is not ready yet. Run :Copilot status and retry auth.",
+                vim.log.levels.WARN
+              )
+            end
+          end, 1200)
+        end
+      end
     end,
   },
   {
