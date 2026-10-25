@@ -18,8 +18,9 @@ return {
   },
   {
     "zbirenbaum/copilot.lua",
+    version = "v2.0.4",
     lazy = true,
-    cmd = { "Copilot", "CopilotAuth", "CopilotStatus" },
+    cmd = { "Copilot" },
     opts = {
       server = { type = "nodejs" },
       copilot_node_command = "node",
