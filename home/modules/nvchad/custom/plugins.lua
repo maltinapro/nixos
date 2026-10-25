@@ -18,8 +18,9 @@ return {
   },
   {
     "zbirenbaum/copilot.lua",
-    lazy = false,
-    priority = 900,
+    lazy = true,
+    event = "InsertEnter",
+    cmd = { "Copilot" },
     opts = {
       server = { type = "nodejs" },
       copilot_node_command = "node",
