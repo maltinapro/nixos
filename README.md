@@ -30,6 +30,16 @@ After rebuilding, open Neovim and authenticate once with:
 :Copilot auth
 ```
 
+If Avante reports `You must setup copilot` or `missing avante_templates`, run:
+
+```vim
+:Copilot auth
+:Lazy sync
+:Lazy build avante.nvim
+```
+
+Then fully restart Neovim.
+
 `<leader>` is `Space` in NvChad.
 
 ### Avante shortcuts (`<leader>a...`)
@@ -62,4 +72,3 @@ Useful Copilot Chat commands:
 :CopilotChatExecLast
 :CopilotChatStrictMode status
 :CopilotChatStrictMode on
-
