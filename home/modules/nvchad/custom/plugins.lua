@@ -18,7 +18,7 @@ return {
   },
   {
     "zbirenbaum/copilot.lua",
-    version = "v2.0.4",
+    commit = "b1482409cefe8b201f89122c682189fabf0436da",
     lazy = true,
     cmd = { "Copilot" },
     opts = {
@@ -62,8 +62,6 @@ return {
       "AvanteToggle",
     },
     config = function(_, opts)
-      vim.g.avante_ready = false
-
       local function ensure_avante_prompt_sign()
         local existing = vim.fn.sign_getdefined("AvanteInputPromptSign")
         if existing and #existing > 0 then
@@ -74,44 +72,6 @@ return {
           text = "󰜥",
           texthl = "AvanteInputPrompt",
         })
-      end
-
-      local function ensure_copilot_hosts_json()
-        local config_dir = vim.env.XDG_CONFIG_HOME
-        if not config_dir or config_dir == "" then
-          config_dir = vim.fn.expand("~/.config")
-        end
-
-        local copilot_dir = config_dir .. "/github-copilot"
-        local hosts_path = copilot_dir .. "/hosts.json"
-        local apps_path = copilot_dir .. "/apps.json"
-        if vim.fn.filereadable(hosts_path) == 1 or vim.fn.filereadable(apps_path) == 1 then
-          return
-        end
-
-        local token = vim.env.GH_COPILOT_TOKEN
-        if not token or token == "" then
-          token = vim.env.GITHUB_COPILOT_TOKEN
-        end
-
-        if (not token or token == "") and vim.fn.executable("sqlite3") == 1 then
-          local auth_db_path = copilot_dir .. "/auth.db"
-          if vim.fn.filereadable(auth_db_path) == 1 then
-            local dump = table.concat(vim.fn.systemlist({ "sqlite3", auth_db_path, ".dump" }), "\n")
-            token = dump:match([["oauth_token"%s*:%s*"([^"]+)"]])
-              or dump:match([["token"%s*:%s*"([^"]+)"]])
-          end
-        end
-
-        if token and token ~= "" then
-          vim.fn.mkdir(copilot_dir, "p")
-          local payload = vim.json.encode({
-            ["github.com"] = {
-              oauth_token = token,
-            },
-          })
-          vim.fn.writefile({ payload }, hosts_path)
-        end
       end
 
       local function get_avante_plugin_dir()
@@ -146,34 +106,7 @@ return {
         return false
       end
 
-      local function patch_avante_copilot_provider()
-        local ok, provider = pcall(require, "avante.providers.copilot")
-        if not ok or type(provider) ~= "table" then
-          return
-        end
-        if provider._maltina_parse_curl_args_patched then
-          return
-        end
-        if type(provider.parse_curl_args) ~= "function" then
-          return
-        end
-
-        local original_parse_curl_args = provider.parse_curl_args
-        provider.parse_curl_args = function(self, prompt_opts)
-          if not self._is_setup and type(self.setup) == "function" then
-            local setup_ok, setup_err = pcall(self.setup)
-            if not setup_ok then
-              error(setup_err)
-            end
-          end
-          return original_parse_curl_args(self, prompt_opts)
-        end
-
-        provider._maltina_parse_curl_args_patched = true
-      end
-
       ensure_avante_prompt_sign()
-      ensure_copilot_hosts_json()
       pcall(function()
         require("lazy").load({ plugins = { "copilot.lua" } })
       end)
@@ -186,7 +119,6 @@ return {
         return
       end
 
-      patch_avante_copilot_provider()
       local setup_ok, err = pcall(avante.setup, opts)
       if not setup_ok then
         vim.schedule(function()
@@ -195,10 +127,7 @@ return {
             vim.log.levels.ERROR
           )
         end)
-        return
       end
-
-      vim.g.avante_ready = true
     end,
   },
   {
