@@ -51,7 +51,14 @@ return {
     "yetone/avante.nvim",
     event = "VeryLazy",
     version = false,
-    build = "make",
+    build = {
+      -- lazy.nvim kills build processes after `git.timeout` (120s by default),
+      -- but compiling the Rust libraries with cargo takes several minutes.
+      function()
+        require("lazy.core.config").options.git.timeout = 1800
+      end,
+      "make",
+    },
     dependencies = {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",

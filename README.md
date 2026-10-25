@@ -53,7 +53,7 @@ Useful Copilot Chat commands:
 :CopilotChatStrictMode on
 ```
 
-Avante (`avante.nvim`) reuses the login created by `:Copilot auth` (`provider = "copilot"`) and runs alongside Copilot Chat. Authenticate first and restart Neovim afterwards; without a login Avante fails to start with `You must setup copilot with either copilot.lua or copilot.vim`. Its native libraries are compiled with `make` on the first start (this takes a few minutes; retry with `:Lazy build avante.nvim` if it failed). Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
+Avante (`avante.nvim`) reuses the login created by `:Copilot auth` (`provider = "copilot"`) and runs alongside Copilot Chat. Authenticate first and restart Neovim afterwards; without a login Avante fails to start with `You must setup copilot with either copilot.lua or copilot.vim`. Its native libraries are compiled with `make` (cargo) on the first start. This takes several minutes (lazy.nvim's process timeout is raised to 30 minutes for this build). If it was interrupted or failed, run `:Lazy build avante.nvim` again; cargo continues with what is already compiled. Its shortcuts use the `<leader>a` prefix (Copilot Chat uses `<leader>c`):
 
 - `<leader>aa` ask Avante (normal/visual)
 - `<leader>ae` edit selection (visual)
