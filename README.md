@@ -21,3 +21,38 @@ nixos-rebuild switch --flake /etc/nixos#thinkpad-development
 # Update all inputs to their latest versions:
 nix flake update
 ```
+
+## GitHub Copilot in Neovim (NvChad)
+
+After rebuilding, open Neovim and authenticate once with:
+
+```vim
+:Copilot auth
+```
+
+Copilot Chat shortcuts (`<leader>` is `Space` in NvChad):
+
+- `<leader>ao` open chat (approval prompt)
+- `<leader>ae` explain selection/code (approval prompt)
+- `<leader>ar` review code (approval prompt)
+- `<leader>af` fix code (approval prompt)
+- `<leader>at` generate tests (approval prompt)
+- `<leader>aw` send workspace context (`git status` + `fd` listing, approval prompt)
+- `<leader>ax` execute last `bash` block from chat (approval prompt)
+
+Useful Copilot Chat commands:
+
+```vim
+:CopilotChatOpen
+:CopilotChatRun list all files recursively in current folder
+:CopilotChatExec find . -type f
+:CopilotChatExecLast
+:CopilotChatStrictMode status
+:CopilotChatStrictMode on
+```
+
+Notes:
+
+- `:CopilotChatRun` asks Copilot to generate exactly one `bash` command; it does not execute automatically.
+- Execute generated commands with `:CopilotChatExecLast`, then approve the action.
+- Strict mode is enabled by default and blocks risky command patterns.

@@ -117,6 +117,9 @@
       users.defaultUserShell = pkgs.zsh;
 
       environment.systemPackages = with pkgs; [
+        ripgrep
+        fd
+        lazygit 
         signal-desktop
         fluffychat
         zettlr
