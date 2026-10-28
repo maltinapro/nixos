@@ -65,6 +65,12 @@
 
       boot.initrd.luks.devices."luks-48307e0b-b2fb-471a-8f6e-5e0f090bf1b1".device = "/dev/disk/by-uuid/48307e0b-b2fb-471a-8f6e-5e0f090bf1b1";
 
+      # Disable the default power-profiles-daemon that enforces lap detection
+      services.power-profiles-daemon.enable = false;
+
+      # Enable TLP for advanced and direct CPU performance management
+      services.tlp.enable = true;
+
       networking.networkmanager.enable = true;
       time.timeZone = "Europe/Berlin";
       i18n.defaultLocale = "en_US.UTF-8";
