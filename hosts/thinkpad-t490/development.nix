@@ -22,6 +22,8 @@
     gcc
     typst
     marksman
+    docker-compose
+    kubernetes-helm
   ];
 
   # Docker and Virtualization
