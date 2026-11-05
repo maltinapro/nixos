@@ -65,7 +65,7 @@
 
       boot.initrd.luks.devices."luks-48307e0b-b2fb-471a-8f6e-5e0f090bf1b1".device = "/dev/disk/by-uuid/48307e0b-b2fb-471a-8f6e-5e0f090bf1b1";
 
-      # Disable the default power-profiles-daemon that enforces lap detection
+      # Disable power-profiles-daemon (enabled by GNOME) because it conflicts with TLP
       services.power-profiles-daemon.enable = false;
 
       # Enable TLP for advanced and direct CPU performance management
