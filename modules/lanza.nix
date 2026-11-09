@@ -15,6 +15,8 @@
   boot.lanzaboote = {
     enable = true;
     pkiBundle = "/var/lib/sbctl";
+    # Each generation stores its own kernel and initrd on the small /boot partition
+    configurationLimit = 5;
     autoGenerateKeys.enable = true;
     autoEnrollKeys.enable = true;
     autoEnrollKeys.autoReboot = true;
