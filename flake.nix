@@ -65,25 +65,12 @@
 
       boot.initrd.luks.devices."luks-48307e0b-b2fb-471a-8f6e-5e0f090bf1b1".device = "/dev/disk/by-uuid/48307e0b-b2fb-471a-8f6e-5e0f090bf1b1";
 
-      # Disable power-profiles-daemon (enabled by GNOME) because it conflicts with TLP
-      services.power-profiles-daemon.enable = false;
-
-      # Enable TLP for advanced and direct CPU performance management
-      services.tlp = {
-        enable = true;
-        settings = {
-          CPU_SCALING_GOVERNOR_ON_AC = "performance";
-          CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-          CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-          CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-          PLATFORM_PROFILE_ON_AC = "performance";
-          PLATFORM_PROFILE_ON_BAT = "low-power";
-          CPU_BOOST_ON_AC = 1;
-          CPU_BOOST_ON_BAT = 0;
-          CPU_MAX_PERF_ON_AC = 100;
-          CPU_MAX_PERF_ON_BAT = 50;
-        };
-      };
+      # Use power-profiles-daemon so the profile is chosen manually in the GNOME
+      # quick settings, independent of AC/battery. TLP is disabled because it
+      # conflicts with it and its automatic power saving caused fan cycling and
+      # trackpoint dropouts.
+      services.tlp.enable = false;
+      services.power-profiles-daemon.enable = true;
 
       networking.networkmanager.enable = true;
       time.timeZone = "Europe/Berlin";
