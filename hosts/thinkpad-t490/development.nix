@@ -8,6 +8,7 @@
   environment.systemPackages = with pkgs; [
     google-chrome
     git
+    gnumake
     nodejs
     python3
     go
